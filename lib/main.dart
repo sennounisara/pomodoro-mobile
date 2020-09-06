@@ -1,11 +1,12 @@
 import 'dart:async';
-
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:pomodoro/report.dart';
+import 'package:pomodoro/task.dart';
 
 void main() => runApp(MaterialApp(
-  home: Counteur()
+  home: Counteur(),
 )
 );
 class Counteur extends StatefulWidget{
@@ -35,8 +36,12 @@ class _CounteurState extends State<Counteur> {
       });
       _timer = new Timer.periodic(new Duration(seconds: 1), (timer) {
         if(second == 0 || second == 60){ minute -=1;second = 60;}
-        if(time == '00:00') pauseTimer();
-        else{
+        if(time == '00:00'){
+          pauseTimer();
+          setState(() {
+              start = 'START';
+          });
+        }else{
           if(second == 0 && minute == 0){
             time = '00;00';
           }else{
@@ -69,6 +74,28 @@ class _CounteurState extends State<Counteur> {
     }
   }
 
+  int _selectedIndex = 0;
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+    if(index == 1)
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => Task()),
+    );
+    else if(index == 0)
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Counteur()),
+      );
+    else
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Report()),
+      );
+  }
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -80,6 +107,7 @@ class _CounteurState extends State<Counteur> {
           Icon(Icons.more_vert),
         ],
         backgroundColor: color1,
+        elevation: 0.0,
       ),
       body:
         Container(
@@ -125,6 +153,7 @@ class _CounteurState extends State<Counteur> {
                         child: Text('Pomodoro',
                           style: TextStyle(
                             fontSize: 15.0,
+                            color: Colors.white,
                           ),
                         )
                     ),
@@ -145,6 +174,7 @@ class _CounteurState extends State<Counteur> {
                         child: Text('Short Break',
                           style: TextStyle(
                             fontSize: 15.0,
+                            color: Colors.white,
                           ),
                         )
                     ),
@@ -165,6 +195,7 @@ class _CounteurState extends State<Counteur> {
                         child: Text('Long Break',
                           style: TextStyle(
                             fontSize: 15.0,
+                            color: Colors.white,
                           ),
                         )
                     )
@@ -176,6 +207,7 @@ class _CounteurState extends State<Counteur> {
                   child: Text('$time',
                     style: TextStyle(
                       fontSize: 100.0,
+                      color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -188,6 +220,7 @@ class _CounteurState extends State<Counteur> {
                     child: Text('$start',
                       style: TextStyle(
                         fontSize: 20.0,
+                        color: block,
                         fontWeight: FontWeight.bold,
                       ),
                     )
@@ -208,6 +241,7 @@ class _CounteurState extends State<Counteur> {
                           child: Text('+ Add Task',
                             style: TextStyle(
                               fontSize: 20.0,
+                              color: Colors.white,
                               fontWeight: FontWeight.bold,
                             ),
                           )
@@ -218,6 +252,36 @@ class _CounteurState extends State<Counteur> {
               ],
             ),
         ),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: color1,
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.access_time,
+              color: Colors.white60,
+            ),
+            title: Text('Pomodoro'),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.business,
+              color: Colors.white60,
+            ),
+            title: Text('Tasks'),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.build,
+              color: Colors.white60,
+            ),
+            title: Text('Report'),
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.white,
+        onTap: _onItemTapped,
+      ),
     );
   }
 }
+
